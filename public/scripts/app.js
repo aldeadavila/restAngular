@@ -1,4 +1,4 @@
-var app = angular.module("app", ["ngRoute", "ngResource", "angularFileUpload"])
+var app = angular.module("app", ["ngRoute", "ngResource"])
 
 .config(['$routeProvider', function($routeProvider){
 	$routeProvider
@@ -33,70 +33,8 @@ var app = angular.module("app", ["ngRoute", "ngResource", "angularFileUpload"])
 	}
 }])
 
-.controller('CreateCtrl', ['$scope', 'Imovels', 'FileUploader', function ($scope, Imovels, FileUploader) {
+.controller('CreateCtrl', ['$scope', 'Imovels', 'Caracteristicas', function ($scope, Imovels, Caracteristicas) {
 	console.log("HomeCtrl");
-
-	var uploader = $scope.uploader = new FileUploader({
-      url: 'upload.php'
-  });
-
-  // FILTERS
-
-  uploader.filters.push({
-      name: 'imageFilter',
-      fn: function(item /*{File|FileLikeObject}*/, options) {
-          var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
-          return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
-      }
-  });
-
-  // CALLBACKS
-
-  uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
-      console.info('onWhenAddingFileFailed', item, filter, options);
-  };
-  uploader.onAfterAddingFile = function(fileItem) {
-      console.info('onAfterAddingFile', fileItem);
-  };
-  uploader.onAfterAddingAll = function(addedFileItems) {
-      console.info('onAfterAddingAll', addedFileItems);
-  };
-  uploader.onBeforeUploadItem = function(item) {
-      console.info('onBeforeUploadItem', item);
-  };
-  uploader.onProgressItem = function(fileItem, progress) {
-      console.info('onProgressItem', fileItem, progress);
-  };
-  uploader.onProgressAll = function(progress) {
-      console.info('onProgressAll', progress);
-  };
-  uploader.onSuccessItem = function(fileItem, response, status, headers) {
-      console.info('onSuccessItem', fileItem, response, status, headers);
-  };
-  uploader.onErrorItem = function(fileItem, response, status, headers) {
-      console.info('onErrorItem', fileItem, response, status, headers);
-  };
-  uploader.onCancelItem = function(fileItem, response, status, headers) {
-      console.info('onCancelItem', fileItem, response, status, headers);
-  };
-  uploader.onCompleteItem = function(fileItem, response, status, headers) {
-      console.info('onCompleteItem', fileItem, response, status, headers);
-  };
-  uploader.onCompleteAll = function() {
-      console.info('onCompleteAll');
-  };
-
-  console.info('uploader', uploader);
-
-
-
-
-	
-	$scope.listaFotos = [];
-	$scope.addFoto = function() {
-		var nome = "foto_" + $scope.listaFotos.length;
-		$scope.listaFotos.push({name : nome, model : "fotos"});
-	};
 
 	$scope.settings = {
 		pageTitle: "Crear Imóvel",
@@ -114,9 +52,27 @@ var app = angular.module("app", ["ngRoute", "ngResource", "angularFileUpload"])
 		status: ""
 	};
 
-	$scope.submit = function(imovels) 
+	$scope.caracteristicas = {
+		1 : "", 
+		2 : "",            
+		3 : "",
+		4 : "",
+		5 : "",
+		6 : "",
+		7 : "",
+		8 : ""
+	};
+
+	$scope.submit = function(imovels, caracteristicas) 
 	{
 		console.log(imovels);
+		console.log(caracteristicas);
+
+
+
+
+
+
 		Imovels.save(imovels).$promise.then(function(data)
 		{
 			if(data.msg)
@@ -130,6 +86,12 @@ var app = angular.module("app", ["ngRoute", "ngResource", "angularFileUpload"])
 }])
 
 .service('Imovels', ['$resource', function ($resource) {
+	return $resource("http://localhost:8099/restAPP/public/api/imovels/:id", {id: "@_id"}, {
+			update: {method: "PUT", params: {id: "@id"}}
+	});	
+}])
+
+.service('Caracteristicas', ['$resource', function ($resource) {
 	return $resource("http://localhost:8099/restAPP/public/api/imovels/:id", {id: "@_id"}, {
 			update: {method: "PUT", params: {id: "@id"}}
 	});	
